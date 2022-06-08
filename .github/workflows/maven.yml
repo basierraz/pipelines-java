@@ -5,9 +5,13 @@ on:
   # se ejecuta el flujo con cada push y pull request
   # o haciendo clic desde las opciones de Github Actions
   [push, pull_request, workflow_dispatch]
-
+  
 jobs:
   build:
+  
+    strategy:
+      matrix:
+        java: [ 11, 12, 13 ]
 
     # se ejecuta en Ubuntu Linux
     runs-on: ubuntu-latest
@@ -16,13 +20,22 @@ jobs:
     steps:
     - name: Descarga el código fuente
       uses: actions/checkout@v2
-
-    - name: Configura JDK 11
+    
+    - name: Configura JDK
       uses: actions/setup-java@v2
       with:
         distribution: 'adopt'
         java-package: jdk
-        java-version: '11'
+        java-version: ${{ matrix.java }}
 
     - name: Compila el proyecto y ejecuta las pruebas
       run: mvn -B package --file pom.xml
+Haga clic en el botón de "Start Commit" y haga commit del cambio.
+
+Revise la ejecución del flujo. Como el flujo de trabajo está configurado para iniciarse cuando se hace "push", este flujo debe haber iniciado. Allí se debe ver los flujos asociados al último commit hecho en el repositorio. Haga clic en el título del commit.
+
+La siguiente pantalla muestra el detalle de los flujos. Allí se puede ver que se ejecutan tres flujos, en lugar de uno. Para ver el detalle, es posible hacer clic en el texto de "X/3 jobs completed".
+
+Al ver el detalle de los trabajos, puede observarse el flujo de trabajo con diferentes parámetros. Considerando que la matriz de configuraciones de Java son 11, 12 y 13, se puede ver los "build(XX)" con el nombre de cada una de las configuraciones.
+
+Back
